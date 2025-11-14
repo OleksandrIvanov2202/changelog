@@ -30,7 +30,7 @@ suspend fun main(args: Array<String>) {
     }
     val response: HttpResponse = client.get("https://youtrack.jetbrains.com/api/issues") {
         parameter("fields", "idReadable,summary,fields(name,value(name))")
-        parameter("query", "project: KT State: Fixed {Available in}: $version")
+        parameter("query", "project: KT State: Fixed {Available in}: {$version}")
     }
 
     if (response.status != HttpStatusCode.OK) {
