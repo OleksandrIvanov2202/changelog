@@ -38,7 +38,10 @@ suspend fun main(args: Array<String>) {
     }
 
     val issues: List<Issue> = response.body()
-    val grouped = convertIssues(issues).groupBy { it.subcategory }.toSortedMap()
+    val grouped = convertIssues(issues).groupBy { it.subcategory }.toSortedMap().mapValues {
+        it.value.sortedBy { it.id }
+    }
+
     grouped.forEach { k, v -> println("$k -> $v") }
 }
 
