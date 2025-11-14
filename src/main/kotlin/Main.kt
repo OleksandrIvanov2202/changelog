@@ -14,6 +14,7 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import java.io.File
 
 suspend fun main(args: Array<String>) {
     if (args.isEmpty()) {
@@ -42,7 +43,18 @@ suspend fun main(args: Array<String>) {
         it.value.sortedBy { it.id }
     }
 
-    grouped.forEach { k, v -> println("$k -> $v") }
+    val outputFile = File("changelog-$version.md")
+    outputFile.printWriter().use { out ->
+        out.println("## $version\n")
+        grouped.forEach { (subsystem, items) ->
+            out.println("### $subsystem")
+            for (issue in items) {
+                val url = "https://youtrack.jetbrains.com/issue/${issue.id}"
+                out.println("- [${issue.id}]($url) ${issue.summary}")
+            }
+            out.println()
+        }
+    }
 }
 
 fun convertIssues(issues: List<Issue>): List<MarkdownIssue> {
