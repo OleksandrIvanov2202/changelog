@@ -5,12 +5,19 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.*
 import io.ktor.client.request.parameter
 import io.ktor.client.statement.*
+import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 
-suspend fun main() {
+suspend fun main(args: Array<String>) {
+    if (args.isEmpty()) {
+        System.err.println("Error: Missing release version argument.\nUsage: ./gradlew run --args=\"2.3.0-Beta1\"")
+        return
+    }
+
+    val version = args[0].trim()
     val client = HttpClient(CIO) {
         install(ContentNegotiation) {
             json(Json { ignoreUnknownKeys = true })
@@ -18,6 +25,12 @@ suspend fun main() {
     }
     val response: HttpResponse = client.get("https://youtrack.jetbrains.com/api/issues") {
         parameter("fields", "idReadable,summary,fields(name,value(name))")
+        parameter("query", "project: KT State: Fixed {Available in}: $version")
+    }
+
+    if (response.status != HttpStatusCode.OK) {
+        System.err.println("Failed to fetch issues. HTTP ${response.status}\n${response.bodyAsText()}")
+        return
     }
 
     val issues: List<Issue> = response.body()
