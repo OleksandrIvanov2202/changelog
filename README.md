@@ -15,7 +15,7 @@ Features
 - Outputs a Markdown file:
   changelog-'version'.md
 
-[Output file example](changelog-2.3.0-Beta1.md)
+[Output file example](changelog-2.3.0-Beta2.md)
 
 ## How to Run
 
