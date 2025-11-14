@@ -9,7 +9,11 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 suspend fun main(args: Array<String>) {
     if (args.isEmpty()) {
@@ -34,15 +38,41 @@ suspend fun main(args: Array<String>) {
     }
 
     val issues: List<Issue> = response.body()
-    println(issues)
+    val grouped = convertIssues(issues).groupBy { it.subcategory }.toSortedMap()
+    grouped.forEach { k, v -> println("$k -> $v") }
 }
+
+fun convertIssues(issues: List<Issue>): List<MarkdownIssue> {
+    return issues.map {
+        MarkdownIssue(
+            id = it.idReadable,
+            summary = it.summary,
+            subcategory = it.getSubcategory()
+        )
+    }
+}
+
+data class MarkdownIssue(
+    val id: String,
+    val summary: String,
+    val subcategory: String,
+)
 
 @Serializable
 data class Issue(
     val idReadable: String,
     val summary: String,
     val fields: List<Field>
-)
+) {
+    fun getSubcategory(): String {
+        val subsystems = fields.firstOrNull { it.name == "Subsystems" }
+            ?.value
+        if (subsystems is JsonArray) {
+            return subsystems.firstOrNull()?.jsonObject["name"]?.jsonPrimitive?.contentOrNull ?: "Uncategorized"
+        }
+        return "Uncategorized"
+    }
+}
 
 @Serializable
 data class Field(
