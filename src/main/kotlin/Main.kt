@@ -15,10 +15,13 @@ import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import java.io.File
+import org.slf4j.LoggerFactory
+
+val logger = LoggerFactory.getLogger("MyLogger")
 
 suspend fun main(args: Array<String>) {
     if (args.isEmpty()) {
-        System.err.println("Error: Missing release version argument.\nUsage: ./gradlew run --args=\"2.3.0-Beta1\"")
+        logger.error("Error: Missing release version argument.\nUsage: ./gradlew run --args=\"2.3.0-Beta1\"")
         return
     }
 
@@ -37,7 +40,7 @@ suspend fun main(args: Array<String>) {
     }
 
     if (response.status != HttpStatusCode.OK) {
-        System.err.println("Failed to fetch issues. HTTP ${response.status}\n${response.bodyAsText()}")
+        logger.error("Failed to fetch issues. HTTP ${response.status}\n${response.bodyAsText()}")
         return
     }
 
@@ -48,6 +51,7 @@ suspend fun main(args: Array<String>) {
     }
 
     //Generate Markdown file
+    logger.info("Generate markdown file")
     val outputFile = File("changelog-$version.md")
     outputFile.printWriter().use { out ->
         out.println("# Kotlin  $version\n")
