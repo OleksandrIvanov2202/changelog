@@ -25,7 +25,7 @@ Make sure that Java 17-24 is added to `PATH` or `JAVA_HOME` set.
 
 git clone https://github.com/OleksandrIvanov2202/changelog.git
 
-cd changelog-generator
+cd changelog
 
 ./gradlew run --args="2.3.0-Beta1"
 
@@ -35,7 +35,7 @@ How to run the same commands on Windows
 
 git clone https://github.com/OleksandrIvanov2202/changelog.git
 
-cd changelog-generator
+cd changelog
 
 gradlew run --args="2.3.0-Beta1"
 
