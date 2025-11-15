@@ -23,11 +23,14 @@ suspend fun main(args: Array<String>) {
     }
 
     val version = args[0].trim()
+    //Initialize an HTTP client using the CIO engine
     val client = HttpClient(CIO) {
         install(ContentNegotiation) {
             json(Json { ignoreUnknownKeys = true })
         }
     }
+
+    // Send a GET request to YouTrack's issues API.
     val response: HttpResponse = client.get("https://youtrack.jetbrains.com/api/issues") {
         parameter("fields", "idReadable,summary,fields(name,value(name))")
         parameter("query", "project: KT State: Fixed {Available in}: {$version}")
@@ -38,11 +41,13 @@ suspend fun main(args: Array<String>) {
         return
     }
 
+    //Group the issues by their subsystem
     val issues: List<Issue> = response.body()
     val grouped = convertIssues(issues).groupBy { it.subcategory }.toSortedMap().mapValues {
         it.value.sortedBy { it.id }
     }
 
+    //Generate Markdown file
     val outputFile = File("changelog-$version.md")
     outputFile.printWriter().use { out ->
         out.println("## $version\n")
@@ -57,6 +62,7 @@ suspend fun main(args: Array<String>) {
     }
 }
 
+// Converts a list of raw Issue objects (as received from YouTrack) into MarkdownIssue objects
 fun convertIssues(issues: List<Issue>): List<MarkdownIssue> {
     return issues.map {
         MarkdownIssue(
