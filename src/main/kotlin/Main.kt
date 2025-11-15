@@ -50,7 +50,8 @@ suspend fun main(args: Array<String>) {
     //Generate Markdown file
     val outputFile = File("changelog-$version.md")
     outputFile.printWriter().use { out ->
-        out.println("## $version\n")
+        out.println("##Kotlin  $version\n")
+        out.println("Changelog")
         grouped.forEach { (subsystem, items) ->
             out.println("### $subsystem")
             for (issue in items) {
