@@ -1,6 +1,6 @@
-##Kotlin  2.3.0-Beta2
+#Kotlin  2.3.0-Beta2
 
-Changelog
+##Changelog
 ### Analysis API
 - [KT-80082](https://youtrack.jetbrains.com/issue/KT-80082) K2. False positive "Cannot resolve method" for self-bounded generic with wildcard return type in Java interop
 
