@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "2.2.20"
     kotlin("plugin.serialization") version "2.2.20"
+    application
 }
 
 group = "org.example"
@@ -20,6 +21,10 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation:${ktor_version}")
     implementation("io.ktor:ktor-serialization-kotlinx-json:${ktor_version}")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+}
+
+application {
+    mainClass.set("MainKt")
 }
 
 kotlin {
